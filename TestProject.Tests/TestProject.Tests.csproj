@@ -1,0 +1,18 @@
+using Microsoft.AspNetCore.Mvc;
+using TestProject.Controllers; 
+using TestProject.Models;
+
+[TestClass]
+public class AccountControllerTests
+{
+[TestMethod]
+public void Register_UserNameEmpty_ReturnsBadRequest()
+{
+var user = new User { UserName = "", Password = "123456" };
+var controller = new AccountController(); 
+
+var result = controller.Register(user) as BadRequestObjectResult;
+
+Assert.AreEqual(400, result.StatusCode);
+}
+}
