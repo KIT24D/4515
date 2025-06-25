@@ -1,11 +1,25 @@
-﻿namespace TestProject.Models
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+
+namespace TestProject.Models
 {
     public class User
     {
-        public int Id { get; set; }
-        public string UserName { get; set; } = string.Empty;
-        public string Password { get; set; } = string.Empty;
-        public string? Email { get; set; }
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public int UserID { get; set; }
+        public string UserName { get; set; }
+        public string Password { get; set; }
+        public string Role { get; set; }
+        public string CompanyName { get; set; }
+        public string ContactInfo { get; set; }
+        public DateTime CreatedDate { get; set; }
+        public string Department { get; set; }
+        public bool? IsApproved { get; set; }
+
+
+        public ICollection<Order> Orders { get; set; }
+        public ICollection<Requirement> CreatedRequirements { get; set; }
+        public ICollection<Requirement> AssignedRequirements { get; set; }
+        public ICollection<CustomerRequirement> CustomerRequirements { get; set; }
+        public ICollection<UserRoleMapping> UserRoleMappings { get; set; }
     }
 }

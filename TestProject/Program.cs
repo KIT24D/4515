@@ -1,43 +1,51 @@
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using TestProject.Data;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models; // 确保添加此命名空间
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 注册数据库上下文（根据实际情况，这里假设是 EF Core 连接 ）
+// 1. 注册数据库上下文
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// 关键：替换 AddControllers 为 AddControllersWithViews，让项目支持 MVC 控制器和视图
-builder.Services.AddControllersWithViews();
+// 2. 注册控制器 + 启用 Newtonsoft.Json（替换默认的 System.Text.Json）
+builder.Services.AddControllers()
+    .AddNewtonsoftJson(options =>
+        options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+
+// 3. 注册 Swagger
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "TestProject API", Version = "v1" });
+});
+
+// 4. 注册跨域
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
 
 var app = builder.Build();
 
+// 5. 配置开发环境中间件
 if (app.Environment.IsDevelopment())
 {
-    app.UseDeveloperExceptionPage();
-}
-else
-{
-    app.UseExceptionHandler("/Home/Error");
-    app.UseHsts();
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "TestProject API v1"));
 }
 
+// 6. 基础中间件
 app.UseHttpsRedirection();
-app.UseStaticFiles(); // 启用静态文件（如 CSS、JS、图片等 ）
-
-app.UseRouting();
-
+app.UseCors();
 app.UseAuthorization();
 
-// 关键：配置 MVC 路由，设置默认首页
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+// 7. 映射控制器路由
+app.MapControllers();
 
 app.Run();
