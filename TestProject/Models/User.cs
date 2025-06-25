@@ -5,21 +5,22 @@ namespace TestProject.Models
 {
     public class User
     {
-        public int UserID { get; set; }
-        public string UserName { get; set; }
-        public string Password { get; set; }
-        public string Role { get; set; }
-        public string CompanyName { get; set; }
-        public string ContactInfo { get; set; }
-        public DateTime CreatedDate { get; set; }
-        public string Department { get; set; }
-        public bool? IsApproved { get; set; }
+       
+        public int Id { get; set; }
+        public string UserName { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
+        public string Role { get; set; } = "User";
+        public string CompanyName { get; set; } = string.Empty;
+        public string ContactInfo { get; set; } = string.Empty;
+        public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
+        public string Department { get; set; } = string.Empty;
+        public bool? IsApproved { get; set; } = false;
 
-
-        public ICollection<Order> Orders { get; set; }
-        public ICollection<Requirement> CreatedRequirements { get; set; }
-        public ICollection<Requirement> AssignedRequirements { get; set; }
-        public ICollection<CustomerRequirement> CustomerRequirements { get; set; }
-        public ICollection<UserRoleMapping> UserRoleMappings { get; set; }
+   
+        public ICollection<Order> Orders { get; set; } = new List<Order>();
+        public ICollection<Requirement> CreatedRequirements { get; set; } = new List<Requirement>();
+        public ICollection<Requirement> AssignedRequirements { get; set; } = new List<Requirement>();
+        public ICollection<CustomerRequirement> CustomerRequirements { get; set; } = new List<CustomerRequirement>();
+        public ICollection<UserRoleMapping> UserRoleMappings { get; set; } = new List<UserRoleMapping>();
     }
 }

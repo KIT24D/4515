@@ -10,7 +10,6 @@ namespace TestProject.Models
 
 
         public ICollection<RolePermissionMapping> RolePermissionMappings { get; set; }
-
-        public ICollection<UserRoleMapping> UserRoleMappings { get; set; }
+            = new List<RolePermissionMapping>();
     }
 }

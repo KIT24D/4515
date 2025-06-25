@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+// 关键：添加 Data 命名空间引用
 using TestProject.Data;
 using TestProject.Models;
 
@@ -11,7 +12,6 @@ namespace TestProject.Controllers
         private readonly AppDbContext _db;
 
         public AccountController(AppDbContext db) => _db = db;
-
 
         [HttpPost("register")]
         public IActionResult Register(User user)

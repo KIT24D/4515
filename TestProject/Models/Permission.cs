@@ -7,6 +7,9 @@ namespace TestProject.Models
     {
         public int PermissionID { get; set; }
         public string PermissionName { get; set; }
+
+
         public ICollection<RolePermissionMapping> RolePermissionMappings { get; set; }
+            = new List<RolePermissionMapping>();
     }
 }
