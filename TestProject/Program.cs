@@ -5,6 +5,8 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 // 关键：添加 Data 命名空间引用
 using TestProject.Data;
+// 新增：用于静态文件托管相关
+using Microsoft.AspNetCore.StaticFiles;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -44,6 +46,16 @@ builder.Services.AddCors(options =>
     });
 });
 
+// 新增：配置静态文件托管，指定前端文件所在目录（这里假设前端文件在 wwwroot 下）
+builder.Services.Configure<StaticFileOptions>(options =>
+{
+    // 可根据实际情况调整，比如前端用了特定文件扩展名需要设置 mime 类型映射等
+    var provider = new FileExtensionContentTypeProvider();
+    // 如果有自定义的文件扩展名和 mime 类型对应，可在这里添加
+    // provider.Mappings[".yourExt"] = "application/your-type";
+    options.ContentTypeProvider = provider;
+});
+
 var app = builder.Build();
 
 // 5. 开发环境启用 Swagger
@@ -54,10 +66,16 @@ if (app.Environment.IsDevelopment())
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "TestProject API v1"));
 }
 
+// 新增：启用静态文件托管，这样才能访问到 wwwroot 里的前端页面
+app.UseStaticFiles();
+
 // 6. 基础中间件
 app.UseHttpsRedirection();
 app.UseCors();
 app.UseAuthorization();
+
+// 新增：路由重定向，访问根路径时跳转到前端 index.html 页面
+app.MapGet("/", () => Results.Redirect("index.html"));
 
 // 7. 映射控制器路由
 app.MapControllers();
